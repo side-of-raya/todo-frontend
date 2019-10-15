@@ -3,6 +3,7 @@ import ThingsToDo from "./ThingsToDo";
 import axios from 'axios';
 import Login from './Login'
 import ReactDOM from 'react-dom';
+import './App.css';
 
 const url = 'http://localhost:3001'
 
@@ -90,30 +91,38 @@ class App extends Component {
     }
     return (
       <div className="container">
-        <h1>todos</h1>
         <div className="row">
           <div className="col">
-            <input type="text" onKeyPress={this.addItem.bind(this)}
+            <div className='stick'>
+            <h1 style={{textAlign: 'center'}}>todos</h1>
+            <input type="text" className='todo-input' onKeyPress={this.addItem.bind(this)}
               placeholder="What needs to be done?" />
             <br />
-            <label className="">{currentToDo.length} to do </label>
-            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+            <div className='flex'>
+            <label className="btn-sm">{currentToDo.length} to do </label>
+            <div className="btn-group btn-group-toggle btn-group-sm" data-toggle="buttons">
               <label className="btn btn-secondary active btn-light"
                 onClick={() => this.setState({ condition: 1 })}>All
-                <input type="radio" />
+                <input type="radio"name="options" id="option1"/>
               </label>
               <label className="btn btn-secondary btn-light"
                 onClick={() => this.setState({ condition: 2 })}>Active
-                <input type="radio" />
+                <input type="radio"name="options" id="option2"/>
               </label>
               <label className="btn btn-secondary btn-light"
                 onClick={() => this.setState({ condition: 3 })}>Completed
-                <input type="radio" />
+                <input type="radio"name="options" id="option3"/>
               </label>
+              </div>
+              <button className="btn btn-secondary btn-sm btn-light" onClick={this.deleteDoneItem}>Clear</button>
+              
             </div>
-            <button className="btn btn-light" onClick={this.deleteDoneItem}>Clear completed</button>
-            <ThingsToDo thingsToDo={currentToDo}
+            <div className='notcol'>
+            <ThingsToDo thingsToDo={currentToDo} 
               deleteItem={this.deleteItem} checkItem={this.checkItem} />
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>

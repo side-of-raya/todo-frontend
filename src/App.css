@@ -1,7 +1,123 @@
-.bton {
-  background-color: rgb(211, 175, 175)
+.login {
+  width: 500px;
+  height: 500px;
 }
 
-.bton-secondary {
-  background-color: rgb(211, 175, 175)
+.stick {
+  overflow: hidden;
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  margin-left: -200px;
+  width: 400px;
+  height: 500px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(218, 218, 218);
 }
+hr {
+  width: 400px;
+}
+.col {
+
+  overflow: hidden;
+}
+.notcol {
+  overflow-y:auto;
+  overflow-x: hidden; height: 300px;
+  width: 400px;
+  margin-left: -1px;
+  /* overflow: visible;  */
+  /* box-sizing: content-box; */
+  /* position: absolute; */
+}
+.todo {
+  /* position: relative;
+  top: 250px; */
+}
+.check {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.container {
+  overflow: hidden;
+  margin-top: 25px;
+  position: static;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 400px;
+  height: 300px;
+}
+
+.todo-input {
+  white-space: pre-line;
+  word-break: break-all;
+  padding: 15px 60px 15px 15px;
+  display: block;
+  line-height: 1.2;
+  transition: color 0.4s;
+  border: 0;
+  border: none;
+  border-bottom: 1px solid #ededed;
+  opacity: 100%;
+  background: rgba(0, 0, 0, 0.003);
+  position: relative;
+  margin: 0;
+  font-size: 24px;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: 1.4em;
+  outline: none;
+  color: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+}
+
+.flex {
+  display: flex;
+  flex-flow: nowrap;
+  justify-content: space-between;
+}
+
+.btn-group-sm {
+  /* display: flex; */
+  /* justify-content: space-between; */
+}
+
+.list-group-item {
+  width: 400px;
+  display: inline;
+}
+
+.close {
+  display: flex;
+  text-align: right;
+  justify-content: flex-end;
+  position: static;
+  right: 32px;
+  /* top: 32px; */
+  /* width: 32px;
+  height: 32px; */
+  opacity: 0.3;
+  margin-right: 10px;
+  }
+  .close:hover {
+  opacity: 1;
+  }
+  .close:before, .close:after {
+  /* position: absolute; */
+  right: 15px;
+  content: ' ';
+  height: 23px;
+  width: 2px;
+  background-color: #333;
+  }
+  .close:before {
+  transform: rotate(45deg);
+  }
+  .close:after {
+  transform: rotate(-45deg);
+  }
