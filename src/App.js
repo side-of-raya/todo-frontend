@@ -22,10 +22,18 @@ class App extends Component {
   getItems = () => {
     axios.get(url + '/todos', {
       headers: {authorization: localStorage.getItem('authorization')}
-    }).then(res => {
+     })
+    //  console.log(res.statusCode)
+    //  const {statusCode} = res;
+    //  console.log(statusCode)
+     .then(res => {
+      console.log(res.statusCode, '&&&')
+      if (res.statusCode !== 200)
+       ReactDOM.render(<Login />, document.getElementById('root'));
         this.setState({thingsToDo : res.data})
       })
-      .catch((error) => { console.log(error) })
+      .catch((error) => {  ;
+        console.log(error, '!!!')})
   }
 
   addItem = (e) => {
@@ -58,13 +66,22 @@ class App extends Component {
     .then( (res) => this.getItems())
   }
 
-  checkItem = (id) => {
-    const body = { id }
+  editItem = (id) => {
+    const body = { id, args: { /*is_checked: !is_checked*/ } }
     axios.patch(url + '/todos', body, {
       headers: {authorization: localStorage.getItem('authorization')}
     })
     .then( (res) => this.getItems())
   }
+
+  editItem = (id, value) => {
+    const body = { id, args: { value } }
+    axios.patch(url + '/todos', body, {
+      headers: {authorization: localStorage.getItem('authorization')}
+    })
+    .then( (res) => this.getItems())
+  }
+  
   logout = () => {
     axios.post(url + '/users/logout',{
       headers: {authorization: localStorage.getItem('authorization')}
@@ -94,6 +111,7 @@ class App extends Component {
         <div className="row">
           <div className="col">
             <div className='stick'>
+              <div className='header'>
             <h1 style={{textAlign: 'center'}}>todos</h1>
             <input type="text" className='todo-input' onKeyPress={this.addItem.bind(this)}
               placeholder="What needs to be done?" />
@@ -117,9 +135,10 @@ class App extends Component {
               <button className="btn btn-secondary btn-sm btn-light" onClick={this.deleteDoneItem}>Clear</button>
               
             </div>
-            <div className='notcol'>
-            <ThingsToDo thingsToDo={currentToDo} 
-              deleteItem={this.deleteItem} checkItem={this.checkItem} />
+            </div>
+            <div className='list'>
+            <ThingsToDo thingsToDo={currentToDo}
+              deleteItem={this.deleteItem} editItem={this.editItem} />
               </div>
             </div>
             
