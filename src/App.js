@@ -28,7 +28,7 @@ class App extends Component {
     //  console.log(statusCode)
      .then(res => {
       console.log(res.statusCode, '&&&')
-      if (res.statusCode !== 200)
+      if (res.status !== 200)
        ReactDOM.render(<Login />, document.getElementById('root'));
         this.setState({thingsToDo : res.data})
       })
