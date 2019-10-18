@@ -3,16 +3,13 @@ import ThingsToDo from "./ThingsToDo";
 import axios from 'axios';
 import Login from './Login'
 import ReactDOM from 'react-dom';
-import './App.css';
-
-const url = 'http://localhost:3001'
 
 class App extends Component {
-
   state = {
     thingsToDo: [],
     condition: 1,
-    logged: false
+    logged: false,
+    is_checked: false,
   }
 
   componentDidMount = () => {
@@ -20,20 +17,17 @@ class App extends Component {
   }
   
   getItems = () => {
-    axios.get(url + '/todos', {
+    axios.get(process.env.REACT_APP_URL + '/todos', {
       headers: {authorization: localStorage.getItem('authorization')}
      })
-    //  console.log(res.statusCode)
-    //  const {statusCode} = res;
-    //  console.log(statusCode)
-     .then(res => {
-      console.log(res.statusCode, '&&&')
-      if (res.status !== 200)
-       ReactDOM.render(<Login />, document.getElementById('root'));
+    .then(res => {
         this.setState({thingsToDo : res.data})
-      })
-      .catch((error) => {  ;
-        console.log(error, '!!!')})
+    })
+    .catch ((error) => {
+      console.log(error)
+        if( error.response.status === 401)
+        ReactDOM.render(<Login />, document.getElementById('root'));
+    })
   }
 
   addItem = (e) => {
@@ -41,7 +35,7 @@ class App extends Component {
       const body = {
         value: e.target.value,
       };
-      axios.post(url + '/todos', body, {
+      axios.post(process.env.REACT_APP_URL + '/todos', body, {
         headers: {authorization: localStorage.getItem('authorization')}
       })
       .then( (res) => this.getItems())
@@ -52,7 +46,7 @@ class App extends Component {
 
   deleteItem = (body) => {
     body = {id: body}
-    axios.delete(url + '/todo/' + body.id, {
+    axios.delete(process.env.REACT_APP_URL + '/todo/' + body.id, {
       headers: {authorization: localStorage.getItem('authorization')}
     })
       .then( (res) => this.getItems())
@@ -60,32 +54,26 @@ class App extends Component {
   }
 
   deleteDoneItem = () => {
-    axios.delete(url + '/todos', {
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
-    .then( (res) => this.getItems())
-  }
-
-  editItem = (id) => {
-    const body = { id, args: { /*is_checked: !is_checked*/ } }
-    axios.patch(url + '/todos', body, {
+    axios.delete(process.env.REACT_APP_URL + '/todos', {
       headers: {authorization: localStorage.getItem('authorization')}
     })
     .then( (res) => this.getItems())
   }
 
   editItem = (id, value) => {
+    console.log(value)
     const body = { id, args: { value } }
-    axios.patch(url + '/todos', body, {
+    axios.patch(process.env.REACT_APP_URL + '/todos', body, {
       headers: {authorization: localStorage.getItem('authorization')}
     })
     .then( (res) => this.getItems())
   }
-  
+
   logout = () => {
-    axios.post(url + '/users/logout',{
+    axios.post(process.env.REACT_APP_URL + '/users/logout',{
       headers: {authorization: localStorage.getItem('authorization')}
     })
+    localStorage.removeItem('authorization');
     ReactDOM.render(<Login />, document.getElementById('root'));
   }
 
@@ -106,7 +94,7 @@ class App extends Component {
         currentToDo = res
         break
     }
-    return (
+     return (
       <div className="container">
         <div className="row">
           <div className="col">
@@ -133,21 +121,19 @@ class App extends Component {
               </label>
               </div>
               <button className="btn btn-secondary btn-sm btn-light" onClick={this.deleteDoneItem}>Clear</button>
-              
-            </div>
+              </div>
             </div>
             <div className='list'>
             <ThingsToDo thingsToDo={currentToDo}
               deleteItem={this.deleteItem} editItem={this.editItem} />
               </div>
             </div>
-            
           </div>
         </div>
+        <button className='btn btn-secondary btn-sm btn-light logout' onClick={this.logout}>logout</button>
       </div>
     );
   }
 }
-
 
 export default App;

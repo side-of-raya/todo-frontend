@@ -4,32 +4,30 @@ import App from './App';
 import ReactDOM from 'react-dom';
 import './App.css';
 
-
 class Login extends Component {
-    state = {
-        error: ''
-    }
     login = (e) => {
+        try{
         e.preventDefault();
         const body = {
             email: e.target[0].value,
             password: e.target[1].value,
         }
-        axios.post("http://localhost:3001/users/login", body)
+        console.log(process.env.URL)
+        axios.post(process.env.REACT_APP_URL, body)
             .then((res) => {
                 if (res.status === 200) {
                     localStorage.setItem('authorization', res.data.authorization);
-                    ReactDOM.render(<App />, document.getElementById('root'));
-                } else {
-                    this.setState({ error: "wrong login/pass :c"})
+                    ReactDOM.render(<App/>, document.getElementById('root'));
                 }
             })
+        } catch (err) {
+            this.setState({ err })
+        }
                 
     }
     render() {
         return(
-            <div className='login'>
-                <label>{this.state.error}</label>
+            <div className='login'>          
             <form onSubmit={this.login.bind()} className="">
             <div className="form-group">
                 <label htmlFor="exampleInputEmail1">Email address</label>
@@ -44,7 +42,10 @@ class Login extends Component {
                 <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
                 <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
             </div>
+            <div className='flex'>
             <button type="submit" className="btn btn-primary">Submit</button>
+            <a className='btn btn-primary' href="/Registration">Registration</a>
+            </div>  
             </form>
             </div>
         );

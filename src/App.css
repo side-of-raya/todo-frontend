@@ -25,7 +25,6 @@
   left: 50%;
   margin-left: -200px;
   width: 400px;
-  /* height: 500px; */
   border-style: solid;
   border-width: 1px;
   border-color: rgb(218, 218, 218);
@@ -43,16 +42,18 @@ border-bottom-right-radius: .0rem;
 border-bottom: none;
 }
 
+.logout {
+  position: absolute;
+  top: 15px;
+  right: 30px;
+}
+
 .list {
   margin-left: -1px;
   overflow-y:auto;
   overflow-x: hidden; 
   max-height: 293px;
   width: 400px;
-  /* margin-left: -1px; */
-  /* overflow: visible;  */
-  /* box-sizing: content-box; */
-  /* position: absolute; */
   border-bottom: none;
 }
 .check {
