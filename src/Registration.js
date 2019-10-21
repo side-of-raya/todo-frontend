@@ -12,7 +12,6 @@ class Registration extends Component {
             name: e.target[1].value,
             password: e.target[2].value,
         }
-        console.log(process.env.REACT_APP_URL)
         axios.post(process.env.REACT_APP_URL + '/users', body)
         .then((res) => {
             if (res.status === 200) {
@@ -27,9 +26,6 @@ class Registration extends Component {
     render() {
         return(
             <div className='login'>
-            <div>
-               <a className='btn' href="/Login">Login</a>
-            </div>
             <form onSubmit={this.reg.bind()} className="">
             <div className="form-group">
                 <label htmlFor="exampleInputEmail1">Email address</label>
@@ -44,7 +40,10 @@ class Registration extends Component {
                 <label htmlFor="exampleInputPassword1">Password</label>
                 <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"/>
             </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <div className='flex'>
+                <button type="submit" className="btn btn-primary">Submit</button>
+                <a className='btn btn-light btn-sm' href="/Login">Back to Login</a>
+            </div>
             </form>
             </div>
         );

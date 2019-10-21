@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import ThingsToDo from "./ThingsToDo";
 import axios from 'axios';
-import Login from './Login'
-import ReactDOM from 'react-dom';
+import { Redirect } from 'react-router-dom';
 
 class App extends Component {
   state = {
     thingsToDo: [],
     condition: 1,
-    logged: false,
+    isLogged: true,
     is_checked: false,
   }
 
@@ -21,12 +20,12 @@ class App extends Component {
       headers: {authorization: localStorage.getItem('authorization')}
      })
     .then(res => {
-        this.setState({thingsToDo : res.data})
+      this.setState({thingsToDo : res.data})
     })
     .catch ((error) => {
       console.log(error)
-        if( error.response.status === 401)
-        ReactDOM.render(<Login />, document.getElementById('root'));
+      if( error.response.status === 401)
+      this.setState({ isLogged: false })
     })
   }
 
@@ -61,7 +60,6 @@ class App extends Component {
   }
 
   editItem = (id, value) => {
-    console.log(value)
     const body = { id, args: { value } }
     axios.patch(process.env.REACT_APP_URL + '/todos', body, {
       headers: {authorization: localStorage.getItem('authorization')}
@@ -70,14 +68,12 @@ class App extends Component {
   }
 
   logout = () => {
-    axios.post(process.env.REACT_APP_URL + '/users/logout',{
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
     localStorage.removeItem('authorization');
-    ReactDOM.render(<Login />, document.getElementById('root'));
+    this.setState({ isLogged: false })
   }
 
   render() {
+    if (!this.state.isLogged) return <Redirect to={'login'}/>
     const { thingsToDo, condition } = this.state;
     let currentToDo;
     switch (condition) {
