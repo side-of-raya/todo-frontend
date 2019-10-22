@@ -26,7 +26,7 @@ class Registration extends Component {
     render() {
         return(
             <div className='login'>
-            <form onSubmit={this.reg.bind()} className="">
+            <form onSubmit={this.reg.bind()}>
             <div className="form-group">
                 <label htmlFor="exampleInputEmail1">Email address</label>
                 <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"/>
@@ -38,7 +38,7 @@ class Registration extends Component {
             </div>
             <div className="form-group">
                 <label htmlFor="exampleInputPassword1">Password</label>
-                <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"/>
+                <input type="password" required={true} className="form-control" id="exampleInputPassword1" placeholder="Password"/>
             </div>
             <div className='flex'>
                 <button type="submit" className="btn btn-primary">Submit</button>

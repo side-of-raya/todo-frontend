@@ -8,63 +8,68 @@ class App extends Component {
     thingsToDo: [],
     condition: 1,
     isLogged: true,
-    is_checked: false,
   }
 
   componentDidMount = () => {
     this.getItems();
   }
   
-  getItems = () => {
-    axios.get(process.env.REACT_APP_URL + '/todos', {
-      headers: {authorization: localStorage.getItem('authorization')}
-     })
-    .then(res => {
-      this.setState({thingsToDo : res.data})
-    })
-    .catch ((error) => {
-      console.log(error)
-      if( error.response.status === 401)
-      this.setState({ isLogged: false })
-    })
-  }
-
-  addItem = (e) => {
-    if (e.key === "Enter" && e.target.value) {
-      const body = {
-        value: e.target.value,
-      };
-      axios.post(process.env.REACT_APP_URL + '/todos', body, {
+  getItems = async () => {
+    try{
+      const res = await axios.get(process.env.REACT_APP_URL + '/todos', {
         headers: {authorization: localStorage.getItem('authorization')}
       })
-      .then( (res) => this.getItems())
-      .catch((error) => { console.log(error) });
-      e.target.value = ""
-    };
+      this.setState({thingsToDo : res.data})
+    } catch (error) {
+      console.log(error)
+      if( error.response.status === 401) this.setState({ isLogged: false })
+    }
   }
 
-  deleteItem = (body) => {
-    body = {id: body}
-    axios.delete(process.env.REACT_APP_URL + '/todo/' + body.id, {
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
-      .then( (res) => this.getItems())
-      .catch(error => console.log(error));
+  addItem = async (e) => {
+    try {
+      e.persist();
+      if (e.key === "Enter" && e.target.value) {
+        const body = {
+          value: e.target.value,
+        };
+        const res = await axios.post(process.env.REACT_APP_URL + '/todo', body, {
+          headers: {authorization: localStorage.getItem('authorization')}
+        })
+        const helpArray = [...this.state.thingsToDo]
+        helpArray.push(res.data);
+        this.setState({ thingsToDo: helpArray });
+        e.target.value = ""
+      }
+    } catch(error) {
+      console.log(error)
+    }
+    
   }
 
-  deleteDoneItem = () => {
-    axios.delete(process.env.REACT_APP_URL + '/todos', {
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
-    .then( (res) => this.getItems())
+  deleteItem = async (body) => {
+    try{
+      body = {id: body}
+      await axios.delete(process.env.REACT_APP_URL + '/todo/' + body.id, {
+        headers: {authorization: localStorage.getItem('authorization')}
+      })
+      const helpArray = await this.state.thingsToDo.filter(item => item.id !== body.id);
+      this.setState({ thingsToDo: helpArray })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  editItem = (id, value) => {
-    const body = { id, args: { value } }
-    axios.patch(process.env.REACT_APP_URL + '/todos', body, {
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
-    .then( (res) => this.getItems())
+  deleteDoneItem = async () => {
+    try{
+      await axios.delete(process.env.REACT_APP_URL + '/todos', {
+        headers: {authorization: localStorage.getItem('authorization')}
+      })
+      const helpArray = this.state.thingsToDo.filter(item => !item.is_checked);
+      this.setState({ thingsToDo: helpArray })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   logout = () => {
@@ -120,8 +125,7 @@ class App extends Component {
               </div>
             </div>
             <div className='list'>
-            <ThingsToDo thingsToDo={currentToDo}
-              deleteItem={this.deleteItem} editItem={this.editItem} />
+            <ThingsToDo thingsToDo={currentToDo} deleteItem={this.deleteItem}/>
               </div>
             </div>
           </div>
