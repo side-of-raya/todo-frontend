@@ -7,6 +7,7 @@ class Login extends Component {
   state = {
     isLogged: false,
     error: '',
+    display: 'none',
   }
 
   login = async (e) => {
@@ -22,7 +23,11 @@ class Login extends Component {
         this.setState({ isLogged: true })          
       }
     } catch (error) {
-      this.setState({ error })
+      if (error.response.status === 401) {
+        this.setState({ error: error.response.data, display: '' });
+        return
+      }
+      console.log(error)
     }
   }
 
@@ -31,9 +36,16 @@ class Login extends Component {
     return(
       <div className='login'>   
       <form onSubmit={this.login.bind()}>
-      <div className="form-group">
+      <div className="form-group alert-div">
         <label htmlFor="exampleInputEmail1">Email address</label>
-        <label className='alert-danger'>{this.state.error}</label>
+        
+
+        <div className="alert alert-danger" style={ { display : this.state.display } } role="alert">
+        {this.state.error}
+        </div>
+
+
+
         <input type="email" required={true} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"/>
         <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
       </div>

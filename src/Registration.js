@@ -6,7 +6,11 @@ import './App.css';
 
 class Registration extends Component {
     reg = (e) => {
+        const regexp = /\.+[a-zA-Z]+$/;
         e.preventDefault();
+        const matches = e.target[0].value.match(regexp)|| [];
+        if (matches.toString().length > 4)
+            alert ('There cannot be more than 3 symbols after dot in email')
         const body = {
             email: e.target[0].value,
             name: e.target[1].value,

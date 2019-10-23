@@ -97,6 +97,24 @@ border-bottom: none;
   width: 400px;
 }
 
+.alert-div{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.alert {
+  max-width:200px;
+  height: 25px;
+  font-size: 16px;
+  padding-left: 13px;
+  padding-top: 0rem;
+  padding-right: 13px;
+  padding-bottom: 0rem;
+  margin-bottom: .4rem;
+  margin-left: 13px;
+  margin-right:13px;
+}
+
 .flex {
   display: flex;
   flex-flow: nowrap;
