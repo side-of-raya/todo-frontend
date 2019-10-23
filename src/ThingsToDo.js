@@ -7,9 +7,18 @@ class ThingsToDo extends Component {
     itemValue: '',
   }
 
+  onBlurHandler = (id, value, e) => {
+    if (!e.target.value) {
+      e.target.value = this.state.itemValue;
+      return
+    }
+    this.props.editItem(id, {value});
+    this.setState({ readOnly: true })
+  }
+
   render() {
-    const { deleteItem, editItem } = this.props;
-    const listToDo = this.props.thingsToDo.map(item => {
+    const { deleteItem, editItem, thingsToDo } = this.props;
+    const listToDo = thingsToDo.map(item => {
       return (
         <li className="list-group-item" key={item.id}>
           <div className="custom-control custom-checkbox">
@@ -21,11 +30,7 @@ class ThingsToDo extends Component {
             readOnly={this.state.readOnly}
             onDoubleClick={() => this.setState({readOnly : false})}
             onFocus={(e) => this.setState({ itemValue: e.target.value })}
-            onBlur={(e) => {
-              editItem(item.id, {value: e.target.value});
-              if (!e.target.value) e.target.value = this.state.itemValue;
-              this.setState({ readOnly: true })
-            }}
+            onBlur={(e) => this.onBlurHandler(item.id, e.target.value, e)}
             htmlFor={item.id} 
             style={ { textDecorationLine: item.is_checked ? "line-through" : "" } }
             defaultValue={item.value}/>
