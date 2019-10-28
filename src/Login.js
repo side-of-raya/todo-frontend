@@ -38,14 +38,9 @@ class Login extends Component {
       <form onSubmit={this.login.bind()}>
       <div className="form-group alert-div">
         <label htmlFor="exampleInputEmail1">Email address</label>
-        
-
         <div className="alert alert-danger" style={ { display : this.state.display } } role="alert">
         {this.state.error}
         </div>
-
-
-
         <input type="email" required={true} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"/>
         <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
       </div>
