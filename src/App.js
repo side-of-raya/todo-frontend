@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ThingsToDo from "./ThingsToDo";
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
+import ServerOff from './ServerOff'
+import ReactDOM from 'react-dom';
 
 axios.defaults.headers.common['authorization'] = localStorage.getItem('authorization');
 
@@ -22,6 +24,7 @@ class App extends Component {
       this.setState({thingsToDo : res.data})
     } catch (error) {
       console.log(error)
+      if (!error.response) { ReactDOM.render(<ServerOff/>, document.getElementById('root')); return;}
       if( error.response.status === 401) this.setState({ isLogged: false })
     }
   }
@@ -52,6 +55,7 @@ class App extends Component {
       const x = helpArray.findIndex(item => item.id === id);
       helpArray[x] = res.data;
       this.setState({ thingsToDo: helpArray });
+      this.getItems();
     } catch (error) {
       console.log(error)
     }
@@ -85,7 +89,6 @@ class App extends Component {
 
   render() {
     if (!this.state.isLogged) return <Redirect to={'login'}/>
-    // this.getItems();
     const { thingsToDo, condition } = this.state;
     let currentToDo;
     switch (condition) {
