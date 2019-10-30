@@ -21,7 +21,7 @@ class Registration extends Component {
                 name: e.target[1].value,
                 password: e.target[2].value,
             }
-            const res = await axios.post(process.env.REACT_APP_URL + '/users', body)
+            const res = await axios.post(process.env.REACT_APP_URL + '/user', body)
             if (res.status === 200) this.setState({ isRegistered: true })
         } catch (error) {
             console.log(error)
@@ -29,7 +29,10 @@ class Registration extends Component {
         }
     }
     render() {
-        if (this.state.isRegistered) return <Redirect to={'/Login'}/>
+        if (this.state.isRegistered) {
+            alert('You successfully signed up! To start using app, check out your mailbox and confirm e-mail!')
+            return <Redirect to={'/Login'}/>
+        }
         return(
             <div className='login'>
             <form onSubmit={this.reg.bind()}>
