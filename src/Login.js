@@ -1,7 +1,9 @@
+import { withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
 import { Redirect } from 'react-router-dom';
+
 
 class Login extends Component {
   state = {
@@ -11,13 +13,13 @@ class Login extends Component {
   }
 
   login = async (e) => {
-    try{
+    try {
       e.preventDefault();
       const body = {
         email: e.target[0].value,
         password: e.target[1].value,
       }
-      const res = await axios.post(process.env.REACT_APP_URL + '/users/login', body)
+      const res = await axios.post(process.env.REACT_APP_URL + '/user/login', body)
       if (res.status === 200) {
         localStorage.setItem('authorization', res.data.authorization);
         this.setState({ isLogged: true })          
@@ -58,4 +60,4 @@ class Login extends Component {
   }
 }
 
-export default Login
+export default withRouter(Login)
