@@ -7,7 +7,7 @@ class ServerOff extends Component {
             <h1>SHHHHHHH! Server is sleeping now.</h1>
             <br/>
             <h1>Why dont you give it a time for rest and come later?</h1>
-            <img src={'https://www.kino-teatr.ru/acter/album/368117/659485.jpg'}/>
+            <img src={'https://www.kino-teatr.ru/acter/album/368117/659485.jpg'} alt='ex-machine'/>
             </div>
         )
     }
