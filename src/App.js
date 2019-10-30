@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import ServerOff from './ServerOff'
 import ReactDOM from 'react-dom';
+import arrayMove from 'array-move';
 
 axios.defaults.headers.common['authorization'] = localStorage.getItem('authorization');
 
@@ -19,7 +20,7 @@ class App extends Component {
   }
   
   getItems = async () => {
-    try{
+    try {
       const res = await axios.get(process.env.REACT_APP_URL + '/todos')
       this.setState({thingsToDo : res.data})
     } catch (error) {
@@ -47,22 +48,29 @@ class App extends Component {
     }    
   }
 
-  editItem = async (id, args) => {
-    try{
+  editItem = async (id, args, oldIndex, newIndex) => {
+    try {
       const body = { id, args }
       const res = await axios.patch(process.env.REACT_APP_URL + '/todo', body )
       const helpArray = [...this.state.thingsToDo]
-      const x = helpArray.findIndex(item => item.id === id);
-      helpArray[x] = res.data;
-      this.setState({ thingsToDo: helpArray });
-      this.getItems();
+      if (id.queue_number) {
+        this.state.thingsToDo[oldIndex] = res.data;
+        await this.setState(({thingsToDo}) => ({
+          thingsToDo: arrayMove(thingsToDo, oldIndex, newIndex),
+        }));
+      }
+      else {
+        const x = helpArray.findIndex(item => item.id === id.id)
+        helpArray[x] = res.data;
+        this.setState({ thingsToDo: helpArray });
+      }
     } catch (error) {
       console.log(error)
     }
   }
 
   deleteItem = async (body) => {
-    try{
+    try {
       body = {id: body}
       await axios.delete(process.env.REACT_APP_URL + '/todo/' + body.id )
       const helpArray = await this.state.thingsToDo.filter(item => item.id !== body.id);
@@ -73,7 +81,7 @@ class App extends Component {
   }
 
   deleteDoneItem = async () => {
-    try{
+    try {
       await axios.delete(process.env.REACT_APP_URL + '/todos' )
       const helpArray = this.state.thingsToDo.filter(item => !item.is_checked);
       this.setState({ thingsToDo: helpArray })
@@ -88,7 +96,7 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.isLogged) return <Redirect to={'login'}/>
+    if (!this.state.isLogged) return <Redirect to={'Login'}/>
     const { thingsToDo, condition } = this.state;
     let currentToDo;
     switch (condition) {
