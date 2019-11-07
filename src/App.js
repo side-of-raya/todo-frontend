@@ -2,69 +2,92 @@ import React, { Component } from 'react';
 import ThingsToDo from "./ThingsToDo";
 import axios from 'axios';
 import { Redirect } from 'react-router-dom';
+import ServerOff from './ServerOff'
+import ReactDOM from 'react-dom';
+import arrayMove from 'array-move';
+
+axios.defaults.headers.common['authorization'] = localStorage.getItem('authorization');
 
 class App extends Component {
   state = {
     thingsToDo: [],
     condition: 1,
     isLogged: true,
-    is_checked: false,
   }
 
   componentDidMount = () => {
     this.getItems();
   }
   
-  getItems = () => {
-    axios.get(process.env.REACT_APP_URL + '/todos', {
-      headers: {authorization: localStorage.getItem('authorization')}
-     })
-    .then(res => {
+  getItems = async () => {
+    try {
+      const res = await axios.get(process.env.REACT_APP_URL + '/todos')
       this.setState({thingsToDo : res.data})
-    })
-    .catch ((error) => {
+    } catch (error) {
       console.log(error)
-      if( error.response.status === 401)
-      this.setState({ isLogged: false })
-    })
+      if (!error.response) { ReactDOM.render(<ServerOff/>, document.getElementById('root')); return;}
+      if( error.response.status === 401) this.setState({ isLogged: false })
+    }
   }
 
-  addItem = (e) => {
-    if (e.key === "Enter" && e.target.value) {
-      const body = {
-        value: e.target.value,
-      };
-      axios.post(process.env.REACT_APP_URL + '/todos', body, {
-        headers: {authorization: localStorage.getItem('authorization')}
-      })
-      .then( (res) => this.getItems())
-      .catch((error) => { console.log(error) });
-      e.target.value = ""
-    };
+  addItem = async (e) => {
+    try {
+      e.persist();
+      if (e.key === "Enter" && e.target.value) {
+        const body = {
+          value: e.target.value,
+        };
+        const res = await axios.post(process.env.REACT_APP_URL + '/todo', body)
+        const helpArray = [...this.state.thingsToDo]
+        helpArray.push(res.data);
+        this.setState({ thingsToDo: helpArray });
+        e.target.value = ""
+      }
+    } catch(error) {
+      console.log(error)
+    }    
   }
 
-  deleteItem = (body) => {
-    body = {id: body}
-    axios.delete(process.env.REACT_APP_URL + '/todo/' + body.id, {
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
-      .then( (res) => this.getItems())
-      .catch(error => console.log(error));
+  editItem = async (id, args, oldIndex, newIndex) => {
+    try {
+      const body = { id, args }
+      const res = await axios.patch(process.env.REACT_APP_URL + '/todo', body )
+      const helpArray = [...this.state.thingsToDo]
+      if (id.queue_number) {
+        this.state.thingsToDo[oldIndex] = res.data;
+        await this.setState(({thingsToDo}) => ({
+          thingsToDo: arrayMove(thingsToDo, oldIndex, newIndex),
+        }));
+      }
+      else {
+        const x = helpArray.findIndex(item => item.id === id.id)
+        helpArray[x] = res.data;
+        this.setState({ thingsToDo: helpArray });
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  deleteDoneItem = () => {
-    axios.delete(process.env.REACT_APP_URL + '/todos', {
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
-    .then( (res) => this.getItems())
+  deleteItem = async (body) => {
+    try {
+      body = {id: body}
+      await axios.delete(process.env.REACT_APP_URL + '/todo/' + body.id )
+      const helpArray = await this.state.thingsToDo.filter(item => item.id !== body.id);
+      this.setState({ thingsToDo: helpArray })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  editItem = (id, value) => {
-    const body = { id, args: { value } }
-    axios.patch(process.env.REACT_APP_URL + '/todos', body, {
-      headers: {authorization: localStorage.getItem('authorization')}
-    })
-    .then( (res) => this.getItems())
+  deleteDoneItem = async () => {
+    try {
+      await axios.delete(process.env.REACT_APP_URL + '/todos' )
+      const helpArray = this.state.thingsToDo.filter(item => !item.is_checked);
+      this.setState({ thingsToDo: helpArray })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   logout = () => {
@@ -73,7 +96,7 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.isLogged) return <Redirect to={'login'}/>
+    if (!this.state.isLogged) return <Redirect to={'Login'}/>
     const { thingsToDo, condition } = this.state;
     let currentToDo;
     switch (condition) {
@@ -116,17 +139,18 @@ class App extends Component {
                 <input type="radio"name="options" id="option3"/>
               </label>
               </div>
-              <button className="btn btn-secondary btn-sm btn-light" onClick={this.deleteDoneItem}>Clear</button>
+              <button className="btn btn-secondary btn-sm btn-light"
+                onClick={this.deleteDoneItem}>Clear</button>
               </div>
             </div>
             <div className='list'>
-            <ThingsToDo thingsToDo={currentToDo}
-              deleteItem={this.deleteItem} editItem={this.editItem} />
+            <ThingsToDo thingsToDo={currentToDo} deleteItem={this.deleteItem} editItem={this.editItem}/>
               </div>
             </div>
           </div>
         </div>
-        <button className='btn btn-secondary btn-sm btn-light logout' onClick={this.logout}>logout</button>
+        <button className='btn btn-secondary btn-sm btn-light logout'
+          onClick={this.logout}>logout</button>
       </div>
     );
   }

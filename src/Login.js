@@ -1,47 +1,54 @@
+import { withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import axios from 'axios';
-import App from './App';
-import ReactDOM from 'react-dom';
 import './App.css';
 import { Redirect } from 'react-router-dom';
+
 
 class Login extends Component {
   state = {
     isLogged: false,
+    error: '',
+    display: 'none',
   }
-  login = (e) => {
-    try{
-    e.preventDefault();
-    const body = {
-      email: e.target[0].value,
-      password: e.target[1].value,
+
+  login = async (e) => {
+    try {
+      e.preventDefault();
+      const body = {
+        email: e.target[0].value,
+        password: e.target[1].value,
+      }
+      const res = await axios.post(process.env.REACT_APP_URL + '/user/login', body)
+      if (res.status === 200) {
+        localStorage.setItem('authorization', res.data.authorization);
+        this.setState({ isLogged: true })          
+      }
+    } catch (error) {
+      if (error.response.status === 401) {
+        this.setState({ error: error.response.data, display: '' });
+        return
+      }
+      console.log(error)
     }
-    axios.post(process.env.REACT_APP_URL + '/users/login', body)
-      .then((res) => {
-        console.log(res)
-        if (res.status === 200) {
-          localStorage.setItem('authorization', res.data.authorization);
-          this.setState({ isLogged: true })          
-        }
-      })
-    } catch (err) {
-      this.setState({ err })
-    }
-        
   }
+
   render() {
     if (this.state.isLogged) return <Redirect to={'/'}/>
     return(
       <div className='login'>   
       <form onSubmit={this.login.bind()}>
-      <div className="form-group">
+      <div className="form-group alert-div">
         <label htmlFor="exampleInputEmail1">Email address</label>
-        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"/>
+        <div className="alert alert-danger" style={ { display : this.state.display } } role="alert">
+        {this.state.error}
+        </div>
+        <input type="email" required={true} className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email"/>
         <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
       </div>
       <div className="form-group">
         <label htmlFor="exampleInputPassword1">Password</label>
-        <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password"/>
+        <input type="password" required={true} className="form-control" id="exampleInputPassword1" placeholder="Password"/>
       </div>      
       <div className='flex'>
       <button type="submit" className="btn btn-primary">Let me in</button>
@@ -53,4 +60,4 @@ class Login extends Component {
   }
 }
 
-export default Login
+export default withRouter(Login)
