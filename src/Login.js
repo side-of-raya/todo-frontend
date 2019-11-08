@@ -21,9 +21,9 @@ class Login extends Component {
       }
       const res = await axios.post(process.env.REACT_APP_URL + '/user/login', body)
       if (res.status === 200) {
-        localStorage.setItem('authorization', res.data.authorization)
-        .then(
-        this.setState({ isLogged: true })
+        localStorage.setItem('authorization', res.data.authorization);
+        setTimeout(
+          this.setState, 1500, { isLogged: true }
         )
       }
     } catch (error) {
