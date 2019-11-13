@@ -31,7 +31,7 @@ class Registration extends Component {
     render() {
         if (this.state.isRegistered) {
             alert('You successfully signed up! To start using app, check out your mailbox and confirm e-mail!')
-            return <Redirect to={'/Login'}/>
+            return <Redirect to='/Login'/>
         }
         return(
             <div className='login'>
