@@ -18,18 +18,18 @@ class Login extends Component {
       const body = {
         email: e.target[0].value,
         password: e.target[1].value,
-      }
-      const res = await axios.post(process.env.REACT_APP_URL + '/user/login', body)
+      };
+      const res = await axios.post(process.env.REACT_APP_URL + '/user/login', body);
       if (res.status === 200) {
         localStorage.setItem('authorization', res.data.authorization);
-        this.setState({ isLogged: true })          
+        this.setState({ isLogged: true });
       }
     } catch (error) {
       if (error.response.status === 401) {
         this.setState({ error: error.response.data, display: '' });
         return
       }
-      console.log(error)
+      console.log(error);
     }
   }
 
